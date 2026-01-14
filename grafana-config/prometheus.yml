@@ -1,0 +1,11 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: 'fastapi-app'
+    static_configs:
+      - targets: ['host.docker.internal:9091']  # Prometheus metrics endpoint from the app
+    scrape_interval: 5s
+    metrics_path: '/metrics'
+

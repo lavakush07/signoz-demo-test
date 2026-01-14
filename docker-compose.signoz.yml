@@ -1,0 +1,57 @@
+
+services:
+  signoz:
+    image: signoz/signoz:latest
+    container_name: signoz
+    ports:
+      - "3301:3301"  # SigNoz UI
+      - "4319:4317"  # OTLP gRPC receiver (mapped to 4319 to avoid conflict with Tempo)
+      - "4320:4318"  # OTLP HTTP receiver (mapped to 4320 to avoid conflict with Tempo)
+    environment:
+      - OTEL_RESOURCE_ATTRIBUTES=service.name=signoz
+      - STORAGE=clickhouse
+      - CLICKHOUSE_URL=tcp://clickhouse:9000
+      - CLICKHOUSE_DATABASE=signoz
+      - CLICKHOUSE_USERNAME=signoz
+      - CLICKHOUSE_PASSWORD=signoz
+    volumes:
+      - signoz-data:/var/lib/signoz
+    depends_on:
+      clickhouse:
+        condition: service_healthy
+      zookeeper:
+        condition: service_started
+    networks:
+      - default
+
+  clickhouse:
+    image: clickhouse/clickhouse-server:latest
+    container_name: clickhouse
+    ports:
+      - "8123:8123"
+      - "9000:9000"
+    volumes:
+      - clickhouse-data:/var/lib/clickhouse
+    environment:
+      - CLICKHOUSE_DB=signoz
+      - CLICKHOUSE_USER=signoz
+      - CLICKHOUSE_PASSWORD=signoz
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:8123/ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  zookeeper:
+    image: zookeeper:3.9
+    container_name: zookeeper
+    ports:
+      - "2181:2181"
+    volumes:
+      - zookeeper-data:/data
+
+volumes:
+  signoz-data:
+  clickhouse-data:
+  zookeeper-data:
+
