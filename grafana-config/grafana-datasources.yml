@@ -1,3 +1,5 @@
+## Add grafana datasources - Prometheus, Loki, Tempo
+
 apiVersion: 1
 
 datasources:
