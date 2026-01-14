@@ -1,4 +1,4 @@
-
+## Add docker compose for grafana 
 services:
   prometheus:
     image: prom/prometheus:latest
