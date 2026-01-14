@@ -1,4 +1,4 @@
-# FastAPI Observability Demo
+# Observability Demo with both Grafana and Signoz
 
 This project demonstrates a FastAPI application instrumented with OpenTelemetry, supporting two visualization stacks: SigNoz and Grafana Stack.
 
