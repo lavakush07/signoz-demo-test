@@ -9,7 +9,7 @@ from app.instrumentation import setup_instrumentation, get_meter, get_tracer
 app = FastAPI()
 
 # Configure structured logging - OpenTelemetry will inject trace_id and span_id
-# Note: LoggingInstrumentor will modify the format to include trace context
+
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
@@ -19,7 +19,7 @@ logger = logging.getLogger(__name__)
 # Initialize instrumentation
 setup_instrumentation(app)
 
-# Get meter and tracer for custom metrics and traces
+
 meter = get_meter()
 tracer = get_tracer()
 
@@ -42,7 +42,7 @@ live_users_gauge = meter.create_up_down_counter(
     unit="1"
 )
 
-# Simulate live users (increment/decrement randomly)
+
 current_users = 0
 
 
@@ -52,10 +52,10 @@ async def metrics_middleware(request: Request, call_next):
     start_time = time.time()
     path = request.url.path
     
-    # Increment request counter
+    
     request_counter.add(1, {"method": request.method, "path": path})
     
-    # Simulate user activity (random increment/decrement)
+    
     global current_users
     if random.random() > 0.7:  # 30% chance
         current_users += random.randint(1, 3)
@@ -78,7 +78,8 @@ async def metrics_middleware(request: Request, call_next):
         duration = time.time() - start_time
         request_latency.record(duration, {"method": request.method, "path": path, "status": "500"})
         raise
-
+        
+## Functions for fast, slow and error 
 
 @app.get("/fast")
 def fast():
